@@ -1,0 +1,49 @@
+sensor.kok_temperature:
+  friendly_name: Kök 
+  icon: mdi:thermometer
+sensor.vaning_tva_temperature:
+  friendly_name: Vån 2 
+  icon: mdi:thermometer  
+sensor.allrum_vaning_tre_temperature:
+  friendly_name: Vån 3
+  icon: mdi:thermometer
+sensor.forradet_temperature:
+  friendly_name: Förradet 
+  icon: mdi:thermometer
+sensor.vaning_tva_humidity:
+  friendly_name: Vån 2 luftfuktighet
+  icon: mdi:thermometer-lines  
+sensor.allrum_vaning_tre_humidity:
+  friendly_name: Vån 3 luftfuktighet
+  icon: mdi:thermometer-lines
+sensor.forradet_humidity:
+  friendly_name: Förradet luftfuktighet
+  icon: mdi:thermometer-lines
+sensor.yr_fog:
+  friendly_name: Dimma
+  icon: mdi:thermometer
+sensor.yr_humidity:
+  friendly_name: luftfuktighet
+  icon: mdi:thermometer-lines
+sensor.yr_temperature:
+  friendly_name: Utetemperatur
+  icon: mdi:thermometer
+sensor.yr_wind_speed:
+  friendly_name: Vindhastighet
+sensor.server_server_health:
+  hidden: true
+sensor.server_temperature_ambient:
+  friendly_name: HP Amp temp
+  icon: mdi:thermometer
+sensor.server_temperature_chipset:
+  friendly_name: HP Chip temp
+  icon: mdi:thermometer
+sensor.server_temperature_exhaust:
+  friendly_name: HP Exhaust temp
+  icon: mdi:thermometer
+sensor.server_temperature_memory:
+  friendly_name: HP Memory temp
+  icon: mdi:thermometer
+sensor.server_temperature_processor:
+  friendly_name: HP CPU temp
+  icon: mdi:thermometer

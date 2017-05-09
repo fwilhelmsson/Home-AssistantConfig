@@ -1,0 +1,238 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Bytorget 34
+  # Location required to calculate the time the sun rises and sets
+  latitude: 59.8085
+  longitude: 17.531978
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 39.3
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # etc
+  customize: !include_dir_merge_named customizations
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Stockholm
+
+  #script: !include_dir_named scripts
+
+# Enables the frontend
+frontend:
+
+# Enables configuration UI
+config:
+
+http:
+  # Uncomment this to add a password (recommended!)
+  api_password: !secret http_password
+  # Uncomment this if you are using SSL or running in Docker etc
+  # base_url: example.duckdns.org:8123
+
+# Checks for available updates
+updater:
+
+# Discover some devices automatically
+discovery:
+  ignore:
+    - plex_mediaserver
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+recorder:
+  purge_days: 14
+  exclude:
+    entities:
+      - sensor.yr_fog
+      - sensor.yr_humidity
+      - sensor.yr_wind_speed
+      - sensor.yr_temperature
+      - switch.fjarr_all_off
+      - switch.fjarr_knapp_1
+      - switch.fjarr_knapp_2
+      - switch.fjarr_knapp_3
+      
+# Enables support for tracking state changes over time.
+history:
+  
+# View all events in a logbook
+logbook:
+
+# Track the sun
+sun:
+
+# Weather Prediction
+sensor:
+  - platform: yr
+    monitored_conditions:
+      - temperature
+      - windSpeed
+      - humidity
+      - fog
+  - platform: hp_ilo
+    name: Server
+    host: 192.168.0.134
+    username: !secret ilo_user
+    password: !secret ilo_password
+    monitored_variables:
+      - server_health
+  - platform: template
+    sensors:
+      server_temperature_exhaust:
+        value_template: '{{states.sensor.server_server_health.attributes.temperature["12-Sys Exhaust"]["currentreading"][0] }}'
+        unit_of_measurement: '°C'
+        entity_id: sensor.server_server_health
+        friendly_name: "Exhaust"
+      
+      server_temperature_chipset:
+        value_template: '{{states.sensor.server_server_health.attributes.temperature["05-Chipset"]["currentreading"][0] }}'
+        unit_of_measurement: '°C'
+        entity_id: sensor.server_server_health
+        friendly_name: "Chipset"
+      
+      server_temperature_memory:
+        value_template: '{{states.sensor.server_server_health.attributes.temperature["03-P1 DIMM 1-2"]["currentreading"][0] }}'
+        unit_of_measurement: '°C'
+        entity_id: sensor.server_server_health
+        friendly_name: "Memory"
+      
+      server_temperature_processor:
+        value_template: '{{states.sensor.server_server_health.attributes.temperature["02-CPU"]["currentreading"][0] }}'
+        unit_of_measurement: '°C'
+        entity_id: sensor.server_server_health
+        friendly_name: "Processor"
+      
+      server_temperature_ambient:
+        value_template: '{{states.sensor.server_server_health.attributes.temperature["01-Inlet Ambient"]["currentreading"][0] }}'
+        unit_of_measurement: '°C'
+        entity_id: sensor.server_server_health
+        friendly_name: "Ambient"          
+  - platform: template
+    sensors:
+      cpu_temp:
+        value_template: '{% if states.sensor.server_temperature_processor.state > "69" %} NOTOK {% endif %}'
+
+  - platform: template
+    sensors:
+      fredrik_battery:
+        value_template: '{% if states.sensor.fredrik_w_battery_level.state < "5" %} NOTOK {% else %} OK {% endif %}'
+
+  - platform: template
+    sensors:
+      ipad_ios_battery:
+        value_template: '{% if states.sensor.fredriks_ipad_battery_level.state < "10" %} NOTOK {% else %} OK {% endif %}'
+
+# Text to speech
+tts:
+  platform: google
+  language: 'sv'
+
+automation:
+  - alias: Auto off carheater 
+    trigger:
+      platform: state
+      entity_id: switch.motorvarmare
+      to: 'on'
+    action:
+      service: homeassistant.turn_on
+      entity_id: script.car_heater
+
+  - alias: 'Knapp3-On'
+    trigger:
+      platform: state
+      entity_id: switch.fjarr_knapp_3
+      state: 'on'
+    action:
+      service: homeassistant.turn_on
+      entity_id: script.food_speech
+
+#influxdb:
+#  host: 192.168.0.144
+ 
+script:
+  car_heater:
+    alias: "Timer motorvämare"
+    sequence:
+      # Cancel ev. old timers
+      - service: script.turn_off
+        data:
+           entity_id: script.timer_off
+      - service: switch.turn_on
+        data:
+          entity_id: switch.motorvarmare
+      # Set new timer
+      - service: script.turn_on
+        data:
+          entity_id: script.timer_off
+
+  timer_off:
+    alias: "Stäng av efter 30 minutes"
+    sequence:
+      - delay:
+          minutes: 35
+      - service: switch.turn_off
+        data:
+          entity_id: switch.motorvarmare
+
+  food_speech:
+    alias: "Säg att det är mat"
+    sequence:
+      - service: tts.google_say
+        data_template:
+           entity_id: media_player.vardagsrum
+           message: >
+             {% if now().strftime("%H")|int < 10 %}
+             Nu är det frukost!
+             {% elif now().strftime("%H")|int < 14 %}
+             Nu är det lunch! 
+             {% elif now().strftime("%H")|int < 20 %}
+             Nu är det middag!
+             {% endif %}
+      - service: switch.turn_off
+        data:
+          entity_id: switch.fjarr_knapp_3
+
+verisure:
+  username: !secret verisure_email
+  password: !secret verisure_password
+  
+tellduslive:
+  private_key: !secret telldus_privatekey
+  public_key: !secret telldus_publickey
+  token: !secret telldus_token
+  token_secret: !secret telldus_tokensecret
+ 
+media_player:
+      - platform: sonos
+        hosts:
+          - 192.168.0.68
+          - 192.168.0.136
+          - 192.168.0.220
+
+# Display
+group: !include groups.yaml
+
+ios:
+
+# Alerts
+alert:
+  cpu_temp_alert:
+    name: CPU-temp är mer än 70 grader
+    entity_id: sensor.cpu_temp
+    repeat: 5
+    state: 'NOTOK'
+    notifiers:
+      - ios_fredrik_w
+  fw_battery_alert:
+    name: Batterinivå lägre än 5% på Fredriks iPhone
+    entity_id: sensor.fredrik_battery
+    repeat: 30
+    state: 'NOTOK'
+    notifiers:
+      - ios_fredrik_w
+  ipad_battery_alert:
+    name: Batterinivå lägre än 10% på iPad
+    entity_id: sensor.ipad_ios_battery
+    repeat: 30
+    state: 'NOTOK'
+    notifiers:
+      - ios_fredrik_w

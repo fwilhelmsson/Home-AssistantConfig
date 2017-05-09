@@ -1,0 +1,64 @@
+default_view:
+  name: DEFAULT
+  view: yes
+  icon: mdi:home
+  entities:
+    - group.switches
+    - group.temperature
+    - group.weather
+    - group.server
+media_view:
+  name: Media
+  view: yes
+  icon: mdi:music-note
+  entities:
+    - group.media
+
+switches:
+  name: Enheter
+  entities:
+    - switch.fjarr_knapp_3
+    - switch.laddning_vid_byra
+    - switch.morkerbelysning
+    - switch.motorvarmare
+    - switch.olivers_fonster
+    - switch.stinas_fonster
+    - switch.vardagsrumsfonster
+    - light.kokslampa
+
+temperature:
+  name: Hus
+  entities:
+    - alarm_control_panel.alarm_1
+    - sensor.kok_temperature
+    - sensor.vaning_tva_temperature
+    - sensor.allrum_vaning_tre_temperature
+    - sensor.forradet_temperature
+    - sensor.vaning_tva_humidity
+    - sensor.allrum_vaning_tre_humidity
+    - sensor.forradet_humidity
+weather:
+  name: Väder
+  entities:
+    - sensor.yr_fog
+    - sensor.yr_humidity
+    - sensor.yr_temperature
+    - sensor.yr_wind_speed
+
+server:
+  name: Server
+  entities:
+    - sensor.server_temperature_processor
+    - sensor.server_server_health
+    - sensor.server_temperature_ambient
+    - sensor.server_temperature_chipset
+    - sensor.server_temperature_exhaust
+    - sensor.server_temperature_memory
+
+media:
+  name: Media
+  entities:
+    - media_player.sovrum
+    - media_player.vardagsrum
+    - media_player.vinden
+    - media_player.bed_room_ue32f6510

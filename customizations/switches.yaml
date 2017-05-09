@@ -1,0 +1,20 @@
+switch.fjarr_all_off:
+  hidden: true
+switch.fjarr_knapp_1:
+  hidden: true
+switch.fjarr_knapp_2:
+  hidden: true
+switch.fjarr_knapp_3:
+  hidden: true
+switch.laddning_vid_byra:
+  icon: mdi:battery-charging-60
+switch.morkerbelysning:
+  icon: mdi:theme-light-dark
+switch.motorvarmare:
+  icon: mdi:fire
+switch.olivers_fonster:
+  icon: mdi:lightbulb-outline
+switch.stinas_fonster:
+  icon: mdi:lightbulb-outline
+switch.vardagsrumsfonster:
+  icon: mdi:lightbulb-outline
